@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popular Jobs - Career Guidance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="fas fa-graduation-cap me-2"></i>Career Guidance</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/jobs">Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/learn">Learn</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if session.username %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/assessment">
+                                <i class="fas fa-clipboard-list me-1"></i>Assessment
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>{{ session.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/register">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center">
+                <h1 class="display-4 fw-bold mb-3">Popular Tech Jobs</h1>
+                <p class="lead text-muted">Explore trending career opportunities in technology</p>
+                <div class="row justify-content-center mt-4">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-lg" placeholder="Search jobs..." id="jobSearch">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Categories -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <button class="btn btn-outline-primary category-filter active" data-category="all">All Jobs</button>
+                        <button class="btn btn-outline-primary category-filter" data-category="development">Development</button>
+                        <button class="btn btn-outline-primary category-filter" data-category="data">Data & AI</button>
+                        <button class="btn btn-outline-primary category-filter" data-category="security">Security</button>
+                        <button class="btn btn-outline-primary category-filter" data-category="cloud">Cloud & DevOps</button>
+                        <button class="btn btn-outline-primary category-filter" data-category="design">Design & UX</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Listings -->
+            <div class="row g-4" id="jobListings">
+                <!-- Software Developer -->
+                <div class="col-lg-6 job-card" data-category="development">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="job-icon bg-primary text-white me-3">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-1">Software Developer</h5>
+                                    <p class="text-muted mb-2">Full Stack Development</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-success">$60K - $130K</span>
+                                        <span class="badge bg-info">Very High Demand</span>
+                                        <span class="badge bg-warning text-dark">Remote Available</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted mb-3">Design, develop, and maintain software applications using various programming languages and frameworks.</p>
+                            <div class="mb-3">
+                                <h6 class="fw-semibold mb-2">Key Skills:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="skill-tag">JavaScript</span>
+                                    <span class="skill-tag">Python</span>
+                                    <span class="skill-tag">React</span>
+                                    <span class="skill-tag">Node.js</span>
+                                    <span class="skill-tag">Git</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-building me-1"></i>1000+ openings
+                                </small>
+                                <button class="btn btn-primary btn-sm" onclick="showJobDetails('software-developer')">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Scientist -->
+                <div class="col-lg-6 job-card" data-category="data">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="job-icon bg-info text-white me-3">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-1">Data Scientist</h5>
+                                    <p class="text-muted mb-2">Analytics & Machine Learning</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-success">$70K - $150K</span>
+                                        <span class="badge bg-info">High Demand</span>
+                                        <span class="badge bg-warning text-dark">Growing Field</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted mb-3">Analyze complex data to extract insights and build predictive models for business decision-making.</p>
+                            <div class="mb-3">
+                                <h6 class="fw-semibold mb-2">Key Skills:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="skill-tag">Python</span>
+                                    <span class="skill-tag">R</span>
+                                    <span class="skill-tag">SQL</span>
+                                    <span class="skill-tag">Machine Learning</span>
+                                    <span class="skill-tag">Statistics</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-building me-1"></i>500+ openings
+                                </small>
+                                <button class="btn btn-primary btn-sm" onclick="showJobDetails('data-scientist')">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cybersecurity Analyst -->
+                <div class="col-lg-6 job-card" data-category="security">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="job-icon bg-danger text-white me-3">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-1">Cybersecurity Analyst</h5>
+                                    <p class="text-muted mb-2">Information Security</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-success">$65K - $125K</span>
+                                        <span class="badge bg-danger">Critical Need</span>
+                                        <span class="badge bg-warning text-dark">High Security</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted mb-3">Protect organizations from cyber threats by monitoring, detecting, and responding to security incidents.</p>
+                            <div class="mb-3">
+                                <h6 class="fw-semibold mb-2">Key Skills:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="skill-tag">Network Security</span>
+                                    <span class="skill-tag">SIEM</span>
+                                    <span class="skill-tag">Penetration Testing</span>
+                                    <span class="skill-tag">Risk Assessment</span>
+                                    <span class="skill-tag">Compliance</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-building me-1"></i>750+ openings
+                                </small>
+                                <button class="btn btn-primary btn-sm" onclick="showJobDetails('cybersecurity-analyst')">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cloud Engineer -->
+                <div class="col-lg-6 job-card" data-category="cloud">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="job-icon bg-primary text-white me-3">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-1">Cloud Engineer</h5>
+                                    <p class="text-muted mb-2">Cloud Infrastructure & DevOps</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-success">$75K - $140K</span>
+                                        <span class="badge bg-info">Growing Field</span>
+                                        <span class="badge bg-warning text-dark">Remote Friendly</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted mb-3">Design, implement, and manage cloud computing systems and infrastructure for scalable applications.</p>
+                            <div class="mb-3">
+                                <h6 class="fw-semibold mb-2">Key Skills:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="skill-tag">AWS</span>
+                                    <span class="skill-tag">Azure</span>
+                                    <span class="skill-tag">Docker</span>
+                                    <span class="skill-tag">Kubernetes</span>
+                                    <span class="skill-tag">Terraform</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-building me-1"></i>600+ openings
+                                </small>
+                                <button class="btn btn-primary btn-sm" onclick="showJobDetails('cloud-engineer')">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI/ML Engineer -->
+                <div class="col-lg-6 job-card" data-category="data">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="job-icon bg-purple text-white me-3">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-1">AI/ML Engineer</h5>
+                                    <p class="text-muted mb-2">Artificial Intelligence & Machine Learning</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-success">$80K - $160K</span>
+                                        <span class="badge bg-info">Emerging Field</span>
+                                        <span class="badge bg-warning text-dark">High Growth</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted mb-3">Develop and deploy machine learning models and AI systems for various business applications.</p>
+                            <div class="mb-3">
+                                <h6 class="fw-semibold mb-2">Key Skills:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="skill-tag">TensorFlow</span>
+                                    <span class="skill-tag">PyTorch</span>
+                                    <span class="skill-tag">Deep Learning</span>
+                                    <span class="skill-tag">MLOps</span>
+                                    <span class="skill-tag">Neural Networks</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-building me-1"></i>400+ openings
+                                </small>
+                                <button class="btn btn-primary btn-sm" onclick="showJobDetails('ai-ml-engineer')">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UX/UI Designer -->
+                <div class="col-lg-6 job-card" data-category="design">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="job-icon bg-warning text-dark me-3">
+                                    <i class="fas fa-palette"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-1">UX/UI Designer</h5>
+                                    <p class="text-muted mb-2">User Experience & Interface Design</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <span class="badge bg-success">$55K - $120K</span>
+                                        <span class="badge bg-info">Stable Demand</span>
+                                        <span class="badge bg-warning text-dark">Creative Field</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text text-muted mb-3">Design intuitive and engaging user interfaces and experiences for web and mobile applications.</p>
+                            <div class="mb-3">
+                                <h6 class="fw-semibold mb-2">Key Skills:</h6>
+                                <div class="d-flex flex-wrap gap-1">
+                                    <span class="skill-tag">Figma</span>
+                                    <span class="skill-tag">Adobe XD</span>
+                                    <span class="skill-tag">Prototyping</span>
+                                    <span class="skill-tag">User Research</span>
+                                    <span class="skill-tag">Wireframing</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-building me-1"></i>350+ openings
+                                </small>
+                                <button class="btn btn-primary btn-sm" onclick="showJobDetails('ux-ui-designer')">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Details Modal -->
+    <div class="modal fade" id="jobDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="jobModalTitle">Job Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="jobModalBody">
+                    <!-- Job details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-primary" id="applyJobBtn" target="_blank">Apply Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Job filtering functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryFilters = document.querySelectorAll('.category-filter');
+            const jobCards = document.querySelectorAll('.job-card');
+            const searchInput = document.getElementById('jobSearch');
+
+            // Category filtering
+            categoryFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    
+                    // Update active filter
+                    categoryFilters.forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter job cards
+                    jobCards.forEach(card => {
+                        if (category === 'all' || card.getAttribute('data-category') === category) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                jobCards.forEach(card => {
+                    const jobTitle = card.querySelector('.card-title').textContent.toLowerCase();
+                    const jobDescription = card.querySelector('.card-text').textContent.toLowerCase();
+                    
+                    if (jobTitle.includes(searchTerm) || jobDescription.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Job details modal
+        function showJobDetails(jobId) {
+            const jobDetails = {
+                'software-developer': {
+                    title: 'Software Developer',
+                    description: 'Software developers create applications and systems that run on computers, mobile devices, and other platforms. They work with various programming languages and frameworks to build user-friendly and efficient software solutions.',
+                    responsibilities: [
+                        'Design and develop software applications',
+                        'Write clean, maintainable code',
+                        'Collaborate with cross-functional teams',
+                        'Debug and troubleshoot issues',
+                        'Participate in code reviews',
+                        'Stay updated with latest technologies'
+                    ],
+                    requirements: [
+                        'Bachelor\'s degree in Computer Science or related field',
+                        '2+ years of programming experience',
+                        'Proficiency in JavaScript, Python, or Java',
+                        'Experience with databases and APIs',
+                        'Strong problem-solving skills',
+                        'Good communication abilities'
+                    ],
+                    companies: ['Google', 'Microsoft', 'Amazon', 'Meta', 'Apple', 'Netflix'],
+                    applyUrl: 'https://www.linkedin.com/jobs/search/?keywords=software%20developer'
+                },
+                'data-scientist': {
+                    title: 'Data Scientist',
+                    description: 'Data scientists analyze large datasets to extract meaningful insights and build predictive models that help organizations make data-driven decisions.',
+                    responsibilities: [
+                        'Collect and analyze large datasets',
+                        'Build machine learning models',
+                        'Create data visualizations',
+                        'Present findings to stakeholders',
+                        'Collaborate with business teams',
+                        'Develop data pipelines'
+                    ],
+                    requirements: [
+                        'Master\'s degree in Data Science, Statistics, or related field',
+                        '3+ years of experience in data analysis',
+                        'Proficiency in Python/R and SQL',
+                        'Experience with ML frameworks',
+                        'Strong statistical knowledge',
+                        'Business acumen'
+                    ],
+                    companies: ['Netflix', 'Uber', 'Airbnb', 'Spotify', 'LinkedIn', 'Tesla'],
+                    applyUrl: 'https://www.linkedin.com/jobs/search/?keywords=data%20scientist'
+                }
+                // Add more job details as needed
+            };
+
+            const job = jobDetails[jobId];
+            if (job) {
+                document.getElementById('jobModalTitle').textContent = job.title;
+                document.getElementById('jobModalBody').innerHTML = `
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Job Description</h6>
+                        <p>${job.description}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Key Responsibilities</h6>
+                        <ul>
+                            ${job.responsibilities.map(resp => `<li>${resp}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Requirements</h6>
+                        <ul>
+                            ${job.requirements.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="fw-bold">Top Hiring Companies</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            ${job.companies.map(company => `<span class="badge bg-primary">${company}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                document.getElementById('applyJobBtn').href = job.applyUrl;
+                
+                const modal = new bootstrap.Modal(document.getElementById('jobDetailsModal'));
+                modal.show();
+            }
+        }
+    </script>
+</body>
+</html>

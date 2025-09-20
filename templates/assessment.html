@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Assessment | Career Guidance System</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.4 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        :root {
+            --bs-body-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --primary: #0d6efd;
+            --primary-light: #e7f1ff;
+            --white: #ffffff;
+            --black: #212529;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-600: #6c757d;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            color: var(--black);
+        }
+        
+        .navbar {
+            background-color: var(--white);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary) !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .subject-card {
+            background: var(--white);
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            height: 100%;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress {
+            height: 0.5rem;
+            border-radius: 1rem;
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap me-2"></i>CareerPath
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-3">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item me-3">
+                        <a class="nav-link active" href="/assessment"><i class="fas fa-clipboard-list me-1"></i> Assessment</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="d-flex align-items-center">
+                                <div class="me-2 d-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 32px; height: 32px;">
+                                    <i class="fas fa-user text-primary"></i>
+                                </div>
+                                <span class="d-none d-md-inline">{{ session.username }}</span>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Assessment Header -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container py-4">
+            <div class="text-center">
+                <h1 class="display-5 fw-bold mb-3">Career Assessment</h1>
+                <p class="lead mb-4">Rate your expertise in key subjects to discover your ideal career path</p>
+                <div class="progress-container mx-auto" style="max-width: 600px;">
+                    <div class="progress bg-white bg-opacity-25" style="height: 8px;">
+                        <div class="progress-bar bg-white" id="assessmentProgress" style="width: 0%"></div>
+                    </div>
+                    <small class="d-block mt-2 text-white-50">Complete all fields to get your results</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Resume Upload Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-lg-5">
+                            <div class="text-center mb-4">
+                                <div class="icon-lg bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3">
+                                    <i class="fas fa-file-upload"></i>
+                                </div>
+                                <h4 class="fw-bold mb-2">Upload Your Resume</h4>
+                                <p class="text-muted mb-4">Get instant career recommendations by uploading your resume (PDF, DOCX, or TXT)</p>
+                                
+                                <!-- File Upload Dropzone -->
+                                <div class="dropzone border-2 border-dashed rounded-3 p-4 text-center" id="resumeDropzone">
+                                    <div class="dropzone-content">
+                                        <i class="fas fa-cloud-upload-alt display-4 text-muted mb-3"></i>
+                                        <h5 class="mb-2">Drag & drop your resume here</h5>
+                                        <p class="text-muted mb-3">or</p>
+                                        <button type="button" class="btn btn-primary px-4" id="browseFilesBtn">
+                                            <i class="fas fa-folder-open me-2"></i>Browse Files
+                                        </button>
+                                        <input type="file" id="resumeInput" accept=".pdf,.docx,.txt" class="d-none">
+                                        <p class="small text-muted mt-3 mb-0">Supports: PDF, DOCX, TXT (Max 5MB)</p>
+                                    </div>
+                                    <div class="upload-progress d-none">
+                                        <div class="progress mb-3" style="height: 8px;">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                                        </div>
+                                        <p class="text-muted mb-0">Analyzing your resume...</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="or-divider my-4 position-relative">
+                                    <span class="px-3 bg-white text-muted small">OR</span>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-outline-primary" id="skipUploadBtn">
+                                        <i class="fas fa-arrow-right me-2"></i>Skip to Manual Assessment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Assessment Form -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4 p-md-5">
+                            <form id="assessmentForm">
+                                <div class="row g-4">
+                                    {% for subject in subjects.keys() %}
+                                    <div class="col-md-6">
+                                        <div class="subject-card h-100">
+                                            <label class="form-label fw-semibold mb-3 d-flex align-items-center">
+                                                <i class="fas fa-{{ loop.index0 % 6 == 0 and 'database' or (loop.index0 % 6 == 1 and 'microchip' or (loop.index0 % 6 == 2 and 'network-wired' or (loop.index0 % 6 == 3 and 'shield-alt' or (loop.index0 % 6 == 4 and 'code' or 'brain')))) }} text-primary me-2"></i>
+                                                {{ subject }}
+                                            </label>
+                                            <select class="form-select" name="{{ subject }}" required>
+                                                <option value="">Select your level</option>
+                                                {% for rating, value in rating_scale.items() %}
+                                                <option value="{{ rating }}">{{ rating }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <div class="text-center mt-5">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5" disabled id="submitBtn">
+                                        <i class="fas fa-search me-2"></i>Discover Your Career Path
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="py-6 bg-light d-none">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="text-center mb-6">
+                <div class="mb-4">
+                    <span class="badge bg-gradient-primary bg-opacity-10 text-primary border-0 px-4 py-2 rounded-pill fw-medium shadow-sm">
+                        <i class="fas fa-chart-line me-2"></i>Your Career Insights
+                    </span>
+                </div>
+                <h2 class="display-5 fw-bold mb-3">Your Career Assessment Results</h2>
+                <p class="lead text-muted mb-0">Based on your unique skills and preferences, we've identified your best career matches</p>
+                <div class="divider mx-auto my-4" style="width: 80px; height: 3px; background: linear-gradient(90deg, rgba(13,110,253,0.1) 0%, rgba(13,110,253,0.8) 50%, rgba(13,110,253,0.1) 100%);"></div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <!-- Top Career Match -->
+                <div class="row justify-content-center mb-6">
+                    <div class="col-lg-10">
+                        <div class="card border-0 shadow-sm overflow-hidden mb-5 hover-lift hover-shadow-lg transition-all">
+                            <div class="position-relative">
+                                <div class="shape shape-bottom shape-fluid-x text-white">
+                                    <svg viewBox="0 0 2880 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2160 0C1440 240 720 240 720 240H0V480H2880V0H2160Z" fill="#f8f9fa"/>
+                                    </svg>
+                                </div>
+                            </div>
+                                                                                                                                                                                                                                                <div class="card-body p-4 p-md-5 position-relative" style="z-index: 1;">
+                                <!-- Header Row -->
+                                <div class="d-flex flex-column flex-md-row align-items-center text-center text-md-start mb-4">
+                                    <!-- Medal Icon -->
+                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-md-4 mb-3 mb-md-0 flex-shrink-0">
+                                        <i class="fas fa-medal text-primary" style="font-size: 2rem;"></i>
+                                    </div>
+                                    
+                                    <!-- Title and Badge Container -->
+                                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between w-100">
+                                        <div class="text-center text-md-start mb-3 mb-md-0">
+                                            <h4 class="mb-1 fw-bold">Best Career Match</h4>
+                                            <p class="text-muted mb-0">Based on your assessment results</p>
+                                        </div>
+                                        <!-- Match Badge -->
+                                        <div class="ms-md-4">
+                                            <span class="badge bg-success text-white bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill fw-medium">
+                                                <i class="fas fa-check-circle me-2"></i>95% Match
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-4">
+                                
+                                <!-- Career Title and Description -->
+                                <div class="row align-items-center mb-4">
+                                    <div class="col-12">
+                                        <h3 class="mb-3 fw-bold" id="topCareerTitle">Software Engineer</h3>
+                                        <p class="lead text-muted mb-4" id="topCareerDesc">Design and develop software applications and systems to meet specific needs.</p>
+                                        
+                                        <!-- Badges Row -->
+                                        <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                                            <span class="badge bg-light text-dark border p-2 d-flex align-items-center">
+                                                <i class="fas fa-rupee-sign me-2 text-primary"></i>
+                                                <span>₹91.5L+</span>
+                                            </span>
+                                            <span class="badge bg-light text-dark border p-2 d-flex align-items-center">
+                                                <i class="fas fa-chart-line me-2 text-success"></i>
+                                                <span>22% Growth (2020-2030)</span>
+                                            </span>
+                                            <span class="badge bg-light text-dark border p-2 d-flex align-items-center">
+                                                <i class="fas fa-graduation-cap me-2 text-info"></i>
+                                                <span>Bachelor's Degree</span>
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Skills Section -->
+                                        <div class="mb-4">
+                                            <h5 class="fw-semibold mb-3">Key Skills Required:</h5>
+                                            <div class="d-flex flex-wrap gap-2" id="topCareerSkills">
+                                                <span class="badge bg-light text-dark border">Programming</span>
+                                                <span class="badge bg-light text-dark border">Problem Solving</span>
+                                                <span class="badge bg-light text-dark border">Algorithms</span>
+                                                <span class="badge bg-light text-dark border">Data Structures</span>
+                                                <span class="badge bg-light text-dark border">Teamwork</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- View Details Button -->
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3 border-top">
+                                            <div class="d-flex align-items-center text-muted">
+                                                <i class="fas fa-clock me-2"></i>
+                                                <small>Last updated: September 2023</small>
+                                            </div>
+                                            <button class="btn btn-outline-primary px-4 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#careerDetailsModal">
+                                                <i class="fas fa-eye me-2"></i>View Full Details
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Career Matches -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <h4 class="mb-4">Other Career Matches</h4>
+                        <div class="row" id="otherCareers">
+                            <!-- Career cards will be dynamically inserted here -->
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="bg-primary text-white bg-opacity-10 p-2 rounded">
+                                                <i class="fas fa-shield-alt text-primary"></i>
+                                            </div>
+                                            <span class="badge bg-success text-white bg-opacity-10 text-success">88% Match</span>
+                                        </div>
+                                        <h5 class="mb-2">Cybersecurity Analyst</h5>
+                                        <p class="text-muted small mb-3">Protect systems and networks from cyber threats and attacks.</p>
+                                        <div class="d-flex text-white justify-content-between align-items-center">
+                                            <span class="text-white fw-bold">₹85.4L+</span>
+                                            <button class="btn btn-sm btn-outline-primary">View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="bg-primary bg-opacity-10 p-2 rounded">
+                                                <i class="fas fa-brain text-primary"></i>
+                                            </div>
+                                            <span class="badge bg-success bg-opacity-10 text-success">82% Match</span>
+                                        </div>
+                                        <p class="mb-2"><strong>Salary Range:</strong> ₹70L - ₹1.25Cr+</p>
+                                        <p class="text-muted small mb-3">Analyze and interpret complex data to help organizations make decisions.</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-primary fw-bold">₹1.02Cr+</span>
+                                            <button class="btn btn-sm btn-outline-primary">View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="bg-primary bg-opacity-10 p-2 rounded">
+                                                <i class="fas fa-network-wired text-primary"></i>
+                                            </div>
+                                            <span class="badge bg-success bg-opacity-10 text-success">78% Match</span>
+                                        </div>
+                                        <h5 class="mb-2">Network Architect</h5>
+                                        <p class="text-muted small mb-3">Design and build data communication networks.</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-primary fw-bold">₹1Cr+</span>
+                                            <button class="btn btn-sm btn-outline-primary">View</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Steps -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card border-0 bg-light">
+                            <div class="card-body p-4">
+                                <h4 class="mb-4">Next Steps</h4>
+                                <div class="row g-4">
+                                    <div class="col-md-4">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-book text-primary"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">Explore Learning Paths</h6>
+                                                <p class="small text-muted mb-0">Discover courses to enhance your skills</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-briefcase text-primary"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">Find Jobs</h6>
+                                                <p class="small text-muted mb-0">Browse relevant job opportunities</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-flex">
+                                            <div class="me-3">
+                                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-redo text-primary"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">Retake Assessment</h6>
+                                                <p class="small text-muted mb-0">Update your skills for better results</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-5">
+                <div class="model-accuracy mb-4 p-3 bg-light rounded">
+                    <span class="text-muted">Model Accuracy: </span>
+                    <span class="fw-bold text-primary" id="modelAccuracy">Loading...</span>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div id="modelAccuracyBar" class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted d-block mt-1">Based on real-time model performance</small>
+                </div>
+
+                <br>
+                
+                <a href="/" class="btn btn-outline-primary me-3">
+                    <i class="fas fa-home me-2"></i>Back to Home
+                </a>
+                <a href="/assessment" class="btn btn-primary">
+                    <i class="fas fa-redo me-2"></i>Retake Assessment
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Details Modal -->
+    <div class="modal fade" id="careerDetailsModal" tabindex="-1" aria-labelledby="careerDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <div>
+                        <h5 class="modal-title fs-4 fw-bold" id="careerDetailsModalLabel">Software Engineer</h5>
+                        <p class="text-muted mb-0">Design and develop software applications and systems</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light p-2 rounded-circle me-3">
+                                    <i class="fas fa-rupee-sign text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Average Salary</h6>
+                                    <p class="mb-0 fw-bold">₹91.5L+ per year</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light p-2 rounded-circle me-3">
+                                    <i class="fas fa-chart-line text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Job Growth</h6>
+                                    <p class="mb-0 fw-bold">22% (Much faster than average)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light p-2 rounded-circle me-3">
+                                    <i class="fas fa-graduation-cap text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Education Required</h6>
+                                    <p class="mb-0 fw-bold">Bachelor's Degree</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-light p-2 rounded-circle me-3">
+                                    <i class="fas fa-briefcase text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">Experience Level</h6>
+                                    <p class="mb-0 fw-bold">Entry to Senior Level</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mb-3">Key Responsibilities</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Develop and test software to meet consumer needs</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Create models and diagrams to show application functionality</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Document application processes for future maintenance</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Update existing software to improve performance</li>
+                    </ul>
+
+                    <h6 class="mb-3 mt-4">Required Skills</h6>
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <span class="badge bg-light text-dark border">JavaScript</span>
+                        <span class="badge bg-light text-dark border">Python</span>
+                        <span class="badge bg-light text-dark border">Java</span>
+                        <span class="badge bg-light text-dark border">SQL</span>
+                        <span class="badge bg-light text-dark border">Git</span>
+                        <span class="badge bg-light text-dark border">Problem Solving</span>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="button" class="btn btn-outline-secondary me-md-2" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">View Learning Path</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="d-none">
+        <div class="spinner-overlay">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-primary">Analyzing your skills...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+    <script>
+        // Assessment-specific functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('assessmentForm');
+            const selects = form.querySelectorAll('select');
+            const submitBtn = document.getElementById('submitBtn');
+            const progressBar = document.getElementById('assessmentProgress');
+            
+            // Update progress and enable submit button
+            function updateProgress() {
+                const completed = Array.from(selects).filter(select => select.value !== '').length;
+                const total = selects.length;
+                const percentage = (completed / total) * 100;
+                
+                progressBar.style.width = percentage + '%';
+                
+                if (completed === total) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.add('pulse');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.remove('pulse');
+                }
+            }
+            
+            // Add change listeners to all selects
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    updateProgress();
+                    
+                    // Add visual feedback
+                    if (this.value) {
+                        this.classList.add('is-valid');
+                        this.classList.remove('is-invalid');
+                        this.parentElement.classList.add('completed');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.parentElement.classList.remove('completed');
+                    }
+                });
+            });
+            
+            // Initial progress update
+            updateProgress();
+        });
+    </script>
+    
+    <!-- Resume Upload Script -->
+    <script src="{{ url_for('static', filename='js/resume-upload.js') }}"></script>
+</body>
+</html>
